@@ -1,29 +1,14 @@
 from bs4 import BeautifulSoup as BS
 import requests
-
-
-url = 'https://www.kantipurdaily.com/news'
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36\
-         (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-
-
-try:
-    page = requests.get(url, headers=headers)
-except Exception as e:
-    print("Connection refused by the server..", e)
-
-soup = BS(page.content, 'lxml')
+from common import get_soup
 
 
 def kantipur_daily_extractor():
-   # with codecs.open("kantipur_daily_cache.csv", "w", encoding='utf-8', errors='ignore') as w:
-        # with open("kantipur_daily_cache.csv", 'w') as w:
-
-    counter = 0
     news_list = []
-    for article in soup.find_all('article', class_='normal'):
+    url = 'https://www.kantipurdaily.com/news'
+    soup = get_soup(url)
 
+    for article in soup.find_all('article', class_='normal'):
         title = article.h2.a.text
         #author = article.find('div', class_='author').text
         summary = article.find('p').text
@@ -47,9 +32,9 @@ def kantipur_daily_extractor():
         }
         news_list.append(news_dict)
 
-        counter += 1
     return news_list
 
 
 if __name__ == "__main__":
-    kantipur_daily_extractor()
+    news = kantipur_daily_extractor()
+    print(len(news))
